@@ -1,0 +1,19 @@
+<form formGroup="employeeForm" (ngSubmit)="submit()">
+    <div>
+        <label>NAME: </label>
+        <input id="name" type="text" [(ngModel)]="name">
+    </div>
+    <div>
+        <label>ID: </label>
+        <input id="id" type="number" [(ngModel)]="id">
+    </div>
+    <div>
+        <label>DEPARTMENT: </label>
+        <input id="department" type="text" [(ngModel)]="department"> 
+    </div>
+    <br>
+    <button type="submit" >ADD EMPLOYEE</button>
+
+    <br>
+    <button (click)="testNavigation()">TEST NAVIGATION</button>
+</form> 

@@ -1,0 +1,116 @@
+<main class="employee-page">
+  <section class="page-header">
+    <div>
+      <p class="eyebrow">Employee Management</p>
+      <h1>Employees</h1>
+    </div>
+
+    <button
+      pButton
+      type="button"
+      icon="pi pi-plus"
+      label="Add New"
+      (click)="addEmployee()"
+    ></button>
+  </section>
+
+  <p-table
+    #employeeTable
+    [value]="employees"
+    [loading]="loading()"
+    [paginator]="true"
+    [rows]="5"
+    [rowsPerPageOptions]="[5, 10, 20]"
+    [globalFilterFields]="['id', 'name', 'department']"
+    dataKey="id"
+    styleClass="p-datatable-gridlines"
+  >
+    <ng-template pTemplate="caption">
+      <div class="table-caption">
+        <span class="search-field">
+          <i class="pi pi-search"></i>
+          <input
+            pInputText
+            type="text"
+            placeholder="Search employees"
+            (input)="employeeTable.filterGlobal($any($event.target).value, 'contains')"
+          />
+        </span>
+      </div>
+    </ng-template>
+
+    <ng-template pTemplate="header">
+      <tr>
+        <th pSortableColumn="name">
+          <div class="column-header">
+            Name
+            <p-sortIcon field="name"></p-sortIcon>
+          </div>
+        </th>
+        <th pSortableColumn="department">
+          <div class="column-header">
+            Department
+            <p-sortIcon field="department"></p-sortIcon>
+          </div>
+        </th>
+        <th pSortableColumn="id">
+          <div class="column-header">
+            Employee ID
+            <p-sortIcon field="id"></p-sortIcon>
+          </div>
+        </th>
+        <th class="actions-header">Actions</th>
+      </tr>
+      <tr>
+        <th>
+          <p-columnFilter field="name" type="text" matchMode="contains" placeholder="Filter by name"></p-columnFilter>
+        </th>
+        <th>
+          <p-columnFilter field="department" type="text" matchMode="contains" placeholder="Filter by department"></p-columnFilter>
+        </th>
+        <th>
+          <p-columnFilter field="id" type="text" matchMode="contains" placeholder="Filter by ID"></p-columnFilter>
+        </th>
+        <th></th>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-employee>
+      <tr>
+        <td>{{ employee.name }}</td>
+        <td>{{ employee.department }}</td>
+        <td>{{ employee.id }}</td>
+        <td>
+          <div class="row-actions">
+            <button
+              pButton
+              type="button"
+              icon="pi pi-pencil"
+              severity="info"
+              [rounded]="true"
+              [text]="true"
+              aria-label="Edit employee"
+              (click)="editEmployee(employee)"
+            ></button>
+            <button
+              pButton
+              type="button"
+              icon="pi pi-trash"
+              severity="danger"
+              [rounded]="true"
+              [text]="true"
+              aria-label="Delete employee"
+              (click)="removeEmployee(employee.id)"
+            ></button>
+          </div>
+        </td>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="emptymessage">
+      <tr>
+        <td colspan="4">No employees found.</td>
+      </tr>
+    </ng-template>
+  </p-table>
+</main>
