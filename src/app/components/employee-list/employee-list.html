@@ -1,8 +1,7 @@
 <main class="employee-page">
   <section class="page-header">
     <div>
-      <p class="eyebrow">Employee Management</p>
-      <h1>Employees</h1>
+      <h1 class="page-title">Employee Management</h1>
     </div>
 
     <button
@@ -27,12 +26,13 @@
   >
     <ng-template pTemplate="caption">
       <div class="table-caption">
+        <h2>Employees</h2>
         <span class="search-field">
           <i class="pi pi-search"></i>
           <input
             pInputText
             type="text"
-            placeholder="Search employees"
+            placeholder="Search"
             (input)="employeeTable.filterGlobal($any($event.target).value, 'contains')"
           />
         </span>
@@ -41,6 +41,12 @@
 
     <ng-template pTemplate="header">
       <tr>
+        <th pSortableColumn="id">
+          <div class="column-header">
+            Employee ID
+            <p-sortIcon field="id"></p-sortIcon>
+          </div>
+        </th>
         <th pSortableColumn="name">
           <div class="column-header">
             Name
@@ -53,23 +59,17 @@
             <p-sortIcon field="department"></p-sortIcon>
           </div>
         </th>
-        <th pSortableColumn="id">
-          <div class="column-header">
-            Employee ID
-            <p-sortIcon field="id"></p-sortIcon>
-          </div>
-        </th>
-        <th class="actions-header">Actions</th>
+        <th class="actions-header"></th>
       </tr>
       <tr>
+        <th>
+          <p-columnFilter field="id" type="text" matchMode="contains" placeholder="Filter by ID"></p-columnFilter>
+        </th>
         <th>
           <p-columnFilter field="name" type="text" matchMode="contains" placeholder="Filter by name"></p-columnFilter>
         </th>
         <th>
           <p-columnFilter field="department" type="text" matchMode="contains" placeholder="Filter by department"></p-columnFilter>
-        </th>
-        <th>
-          <p-columnFilter field="id" type="text" matchMode="contains" placeholder="Filter by ID"></p-columnFilter>
         </th>
         <th></th>
       </tr>
@@ -77,9 +77,9 @@
 
     <ng-template pTemplate="body" let-employee>
       <tr>
+        <td>{{ employee.id }}</td>
         <td>{{ employee.name }}</td>
         <td>{{ employee.department }}</td>
-        <td>{{ employee.id }}</td>
         <td>
           <div class="row-actions">
             <button
@@ -100,7 +100,7 @@
               [rounded]="true"
               [text]="true"
               aria-label="Delete employee"
-              (click)="removeEmployee(employee.id)"
+              (click)="confirmRemoveEmployee(employee)"
             ></button>
           </div>
         </td>
@@ -113,4 +113,65 @@
       </tr>
     </ng-template>
   </p-table>
+
+  <p-dialog
+    header="Add Employee"
+    [(visible)]="addEmployeeDialogVisible"
+    [modal]="true"
+    [draggable]="false"
+    [resizable]="false"
+    [style]="{ width: 'min(520px, 92vw)' }"
+  >
+    <app-employee-form
+      (employeeSaved)="handleEmployeeSaved()"
+      (cancelled)="closeAddEmployeeDialog()"
+    ></app-employee-form>
+  </p-dialog>
+
+  <p-dialog
+    header="Edit Employee"
+    [(visible)]="editEmployeeDialogVisible"
+    [modal]="true"
+    [draggable]="false"
+    [resizable]="false"
+    [style]="{ width: 'min(520px, 92vw)' }"
+    (onHide)="selectedEmployee = null"
+  >
+    <app-employee-edit
+      [employee]="selectedEmployee"
+      (employeeUpdated)="handleEmployeeUpdated($event)"
+      (cancelled)="closeEditEmployeeDialog()"
+    ></app-employee-edit>
+  </p-dialog>
+
+  <p-dialog
+    header="Remove Employee"
+    [(visible)]="deleteEmployeeDialogVisible"
+    [modal]="true"
+    [draggable]="false"
+    [resizable]="false"
+    [style]="{ width: 'min(420px, 92vw)' }"
+    (onHide)="employeePendingDelete = null"
+  >
+    <p class="delete-message">Do you want to remove this?</p>
+
+    <div class="delete-actions">
+      <button
+        pButton
+        type="button"
+        label="Cancel"
+        severity="secondary"
+        [outlined]="true"
+        (click)="closeDeleteEmployeeDialog()"
+      ></button>
+      <button
+        pButton
+        type="button"
+        label="OK"
+        icon="pi pi-check"
+        severity="danger"
+        (click)="removeEmployee()"
+      ></button>
+    </div>
+  </p-dialog>
 </main>

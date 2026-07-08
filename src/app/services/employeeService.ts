@@ -19,6 +19,10 @@ export class EmployeeService {
     return this.httpClient.post<void>(this.apiUrl, employee);
   }
 
+  updateEmployee(employeeId: number, employee: Employee) {
+    return this.httpClient.put<void>(`${this.apiUrl}/${employeeId}`, employee);
+  }
+
   removeEmployee(employeeId: number) {
     return this.httpClient.delete<void>(this.apiUrl, {body: employeeId});
   }
