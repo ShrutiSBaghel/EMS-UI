@@ -1,0 +1,56 @@
+<form class="employee-form" #employeeEditForm="ngForm" (ngSubmit)="submit()">
+  <label class="form-field" for="edit-name">
+    <span>Name</span>
+    <input
+      pInputText
+      id="edit-name"
+      name="name"
+      type="text"
+      [(ngModel)]="editingEmployee.name"
+      required
+    />
+  </label>
+
+  <label class="form-field" for="edit-id">
+    <span>Employee ID</span>
+    <input
+      pInputText
+      id="edit-id"
+      name="id"
+      type="number"
+      [(ngModel)]="editingEmployee.id"
+      required
+    />
+  </label>
+
+  <label class="form-field" for="edit-department">
+    <span>Department</span>
+    <input
+      pInputText
+      id="edit-department"
+      name="department"
+      type="text"
+      [(ngModel)]="editingEmployee.department"
+      required
+    />
+  </label>
+
+  <div class="form-actions">
+    <button
+      pButton
+      type="button"
+      label="Cancel"
+      severity="secondary"
+      [outlined]="true"
+      (click)="cancel()"
+    ></button>
+    <button
+      pButton
+      type="submit"
+      label="OK"
+      icon="pi pi-check"
+      [loading]="saving()"
+      [disabled]="employeeEditForm.invalid || saving()"
+    ></button>
+  </div>
+</form>

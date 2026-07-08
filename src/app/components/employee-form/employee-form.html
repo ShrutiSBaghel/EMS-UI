@@ -1,19 +1,44 @@
-<form formGroup="employeeForm" (ngSubmit)="submit()">
-    <div>
-        <label>NAME: </label>
-        <input id="name" type="text" [(ngModel)]="name">
-    </div>
-    <div>
-        <label>ID: </label>
-        <input id="id" type="number" [(ngModel)]="id">
-    </div>
-    <div>
-        <label>DEPARTMENT: </label>
-        <input id="department" type="text" [(ngModel)]="department"> 
-    </div>
-    <br>
-    <button type="submit" >ADD EMPLOYEE</button>
+<form class="employee-form" #employeeForm="ngForm" (ngSubmit)="submit()">
+  <label class="form-field" for="name">
+    <span>Name</span>
+    <input
+      pInputText
+      id="name"
+      name="name"
+      type="text"
+      [(ngModel)]="name"
+      required
+    />
+  </label>
 
-    <br>
-    <button (click)="testNavigation()">TEST NAVIGATION</button>
-</form> 
+  <label class="form-field" for="department">
+    <span>Department</span>
+    <input
+      pInputText
+      id="department"
+      name="department"
+      type="text"
+      [(ngModel)]="department"
+      required
+    />
+  </label>
+
+  <div class="form-actions">
+    <button
+      pButton
+      type="button"
+      label="Cancel"
+      severity="secondary"
+      [outlined]="true"
+      (click)="cancel()"
+    ></button>
+    <button
+      pButton
+      type="submit"
+      label="Add Employee"
+      icon="pi pi-check"
+      [loading]="saving()"
+      [disabled]="employeeForm.invalid || saving()"
+    ></button>
+  </div>
+</form>

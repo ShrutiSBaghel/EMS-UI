@@ -1,59 +1,54 @@
-import { Component, inject } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, FormsModule } from '@angular/forms';
+import { Component, EventEmitter, Output, signal } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { EmployeeService } from '../../services/employeeService';
 import { Employee } from '../../models/employee';
-import { Router } from '@angular/router';
+import { ButtonModule } from 'primeng/button';
+import { InputTextModule } from 'primeng/inputtext';
 
 @Component({
   selector: 'app-employee-form',
-  imports: [FormsModule],
+  imports: [ButtonModule, FormsModule, InputTextModule],
   standalone: true,
   templateUrl: './employee-form.html',
   styleUrl: './employee-form.css',
-}) 
+})
 export class EmployeeForm {
-  constructor(private employeeService: EmployeeService, private formBuilder: FormBuilder,
-    private router: Router
-  ) {}
+  constructor(private employeeService: EmployeeService) {}
 
-  id: number = 0;
+  @Output() employeeSaved = new EventEmitter<Employee>();
+  @Output() cancelled = new EventEmitter<void>();
+
   name: string = '';
   department: string = '';
-
-  // employeeForm = this.formBuilder.group({
-  //   name: [''],
-  //   department: ['']
-  // });
+  saving = signal(false);
 
   submit() {
-    // if (this.employeeForm.valid) {
-    //   console.log(1, this.employeeForm.value);
-    //   const emp = this.employeeForm.getRawValue() as unknown as Employee;
-    //   this.employeeService.addEmployees(emp);
-    // }
-    let emp: Employee = {id: this.id, name: this.name, department: this.department}
-    this.employeeService.addEmployees(emp).subscribe({next: data => {
-      console.log('check');
-      try {
-        this.router.navigate(['/']).then(result => {
-          console.log('navigation');
-          
-        });
-      } catch (error) {
-        console.error(error);
-        
-      }
-    }, error: err => {
-      console.log('error');
-    }, complete: () => {
-      console.log('coming here');
-      
-      this.router.navigate(['']);
-    }});
+    const employee: Employee = {
+      name: this.name.trim(),
+      department: this.department.trim()
+    };
+
+    this.saving.set(true);
+    this.employeeService.addEmployees(employee).subscribe({
+      next: () => {
+        this.employeeSaved.emit(employee);
+        this.resetForm();
+      },
+      error: err => {
+        console.error(err);
+        this.saving.set(false);
+      },
+      complete: () => this.saving.set(false)
+    });
   }
 
-  testNavigation() {
-    this.router.navigate(['/']);
+  cancel() {
+    this.resetForm();
+    this.cancelled.emit();
+  }
 
+  private resetForm() {
+    this.name = '';
+    this.department = '';
   }
 }
