@@ -1,177 +1,188 @@
 <main class="employee-page">
-  <section class="page-header">
-    <div>
-      <h1 class="page-title">Employee Management</h1>
-    </div>
+  <section class="employee-shell">
+    <p-tabs value="Employees">
+      <p-tablist>
+        <p-tab value="Employees">Employees</p-tab>
+        <p-tab value="Users">Users</p-tab>
+      </p-tablist>
+      <p-tabpanels>
+        <p-tabpanel value="Employees">
+          <div class="tab-toolbar">
+            <button
+              pButton
+              type="button"
+              icon="pi pi-plus"
+              label="Add"
+              (click)="addEmployee()"
+            ></button>
+          </div>
 
-    <button
-      pButton
-      type="button"
-      icon="pi pi-plus"
-      label="Add New"
-      (click)="addEmployee()"
-    ></button>
+          <p-table
+            #employeeTable
+            [value]="employees"
+            [loading]="loading()"
+            [paginator]="true"
+            [rows]="5"
+            [rowsPerPageOptions]="[5, 10, 20]"
+            [globalFilterFields]="['id', 'name', 'department']"
+            dataKey="id"
+            styleClass="p-datatable-gridlines"
+          >
+            <ng-template pTemplate="caption">
+              <div class="table-caption">
+                <h2>Employees</h2>
+                <span class="search-field">
+                  <i class="pi pi-search"></i>
+                  <input
+                    pInputText
+                    type="text"
+                    placeholder="Search"
+                    (input)="employeeTable.filterGlobal($any($event.target).value, 'contains')"
+                  />
+                </span>
+              </div>
+            </ng-template>
+
+            <ng-template pTemplate="header">
+              <tr>
+                <th pSortableColumn="id">
+                  <div class="column-header">
+                    Employee ID
+                    <p-sortIcon field="id"></p-sortIcon>
+                  </div>
+                </th>
+                <th pSortableColumn="name">
+                  <div class="column-header">
+                    Name
+                    <p-sortIcon field="name"></p-sortIcon>
+                  </div>
+                </th>
+                <th pSortableColumn="department">
+                  <div class="column-header">
+                    Department
+                    <p-sortIcon field="department"></p-sortIcon>
+                  </div>
+                </th>
+                <th class="actions-header"></th>
+              </tr>
+              <tr>
+                <th>
+                  <p-columnFilter field="id" type="text" matchMode="contains" placeholder="Filter by ID"></p-columnFilter>
+                </th>
+                <th>
+                  <p-columnFilter field="name" type="text" matchMode="contains" placeholder="Filter by name"></p-columnFilter>
+                </th>
+                <th>
+                  <p-columnFilter field="department" type="text" matchMode="contains" placeholder="Filter by department"></p-columnFilter>
+                </th>
+                <th></th>
+              </tr>
+            </ng-template>
+
+            <ng-template pTemplate="body" let-employee>
+              <tr>
+                <td>{{ employee.id }}</td>
+                <td>{{ employee.name }}</td>
+                <td>{{ employee.department }}</td>
+                <td>
+                  <div class="row-actions">
+                    <button
+                      pButton
+                      type="button"
+                      icon="pi pi-pencil"
+                      severity="info"
+                      [rounded]="true"
+                      [text]="true"
+                      aria-label="Edit employee"
+                      (click)="editEmployee(employee)"
+                    ></button>
+                    <button
+                      pButton
+                      type="button"
+                      icon="pi pi-trash"
+                      severity="danger"
+                      [rounded]="true"
+                      [text]="true"
+                      aria-label="Delete employee"
+                      (click)="confirmRemoveEmployee(employee)"
+                    ></button>
+                  </div>
+                </td>
+              </tr>
+            </ng-template>
+
+            <ng-template pTemplate="emptymessage">
+              <tr>
+                <td colspan="4">No employees found.</td>
+              </tr>
+            </ng-template>
+          </p-table>
+
+          <p-dialog
+            header="Add Employee"
+            [(visible)]="addEmployeeDialogVisible"
+            [modal]="true"
+            [draggable]="false"
+            [resizable]="false"
+            [style]="{ width: 'min(520px, 92vw)' }"
+          >
+            <app-employee-form
+              (employeeSaved)="handleEmployeeSaved()"
+              (cancelled)="closeAddEmployeeDialog()"
+            ></app-employee-form>
+          </p-dialog>
+
+          <p-dialog
+            header="Edit Employee"
+            [(visible)]="editEmployeeDialogVisible"
+            [modal]="true"
+            [draggable]="false"
+            [resizable]="false"
+            [style]="{ width: 'min(520px, 92vw)' }"
+            (onHide)="selectedEmployee = null"
+          >
+            <app-employee-edit
+              [employee]="selectedEmployee"
+              (employeeUpdated)="handleEmployeeUpdated($event)"
+              (cancelled)="closeEditEmployeeDialog()"
+            ></app-employee-edit>
+          </p-dialog>
+
+          <p-dialog
+            header="Remove Employee"
+            [(visible)]="deleteEmployeeDialogVisible"
+            [modal]="true"
+            [draggable]="false"
+            [resizable]="false"
+            [style]="{ width: 'min(420px, 92vw)' }"
+            (onHide)="employeePendingDelete = null"
+          >
+            <p class="delete-message">Do you want to remove this?</p>
+
+            <div class="delete-actions">
+              <button
+                pButton
+                type="button"
+                label="Cancel"
+                severity="secondary"
+                [outlined]="true"
+                (click)="closeDeleteEmployeeDialog()"
+              ></button>
+              <button
+                pButton
+                type="button"
+                label="OK"
+                icon="pi pi-check"
+                severity="danger"
+                (click)="removeEmployee()"
+              ></button>
+            </div>
+          </p-dialog>
+        </p-tabpanel>
+        <p-tabpanel value="Users">
+          <app-user-list></app-user-list>
+        </p-tabpanel>
+      </p-tabpanels>
+    </p-tabs>
   </section>
-
-  <p-table
-    #employeeTable
-    [value]="employees"
-    [loading]="loading()"
-    [paginator]="true"
-    [rows]="5"
-    [rowsPerPageOptions]="[5, 10, 20]"
-    [globalFilterFields]="['id', 'name', 'department']"
-    dataKey="id"
-    styleClass="p-datatable-gridlines"
-  >
-    <ng-template pTemplate="caption">
-      <div class="table-caption">
-        <h2>Employees</h2>
-        <span class="search-field">
-          <i class="pi pi-search"></i>
-          <input
-            pInputText
-            type="text"
-            placeholder="Search"
-            (input)="employeeTable.filterGlobal($any($event.target).value, 'contains')"
-          />
-        </span>
-      </div>
-    </ng-template>
-
-    <ng-template pTemplate="header">
-      <tr>
-        <th pSortableColumn="id">
-          <div class="column-header">
-            Employee ID
-            <p-sortIcon field="id"></p-sortIcon>
-          </div>
-        </th>
-        <th pSortableColumn="name">
-          <div class="column-header">
-            Name
-            <p-sortIcon field="name"></p-sortIcon>
-          </div>
-        </th>
-        <th pSortableColumn="department">
-          <div class="column-header">
-            Department
-            <p-sortIcon field="department"></p-sortIcon>
-          </div>
-        </th>
-        <th class="actions-header"></th>
-      </tr>
-      <tr>
-        <th>
-          <p-columnFilter field="id" type="text" matchMode="contains" placeholder="Filter by ID"></p-columnFilter>
-        </th>
-        <th>
-          <p-columnFilter field="name" type="text" matchMode="contains" placeholder="Filter by name"></p-columnFilter>
-        </th>
-        <th>
-          <p-columnFilter field="department" type="text" matchMode="contains" placeholder="Filter by department"></p-columnFilter>
-        </th>
-        <th></th>
-      </tr>
-    </ng-template>
-
-    <ng-template pTemplate="body" let-employee>
-      <tr>
-        <td>{{ employee.id }}</td>
-        <td>{{ employee.name }}</td>
-        <td>{{ employee.department }}</td>
-        <td>
-          <div class="row-actions">
-            <button
-              pButton
-              type="button"
-              icon="pi pi-pencil"
-              severity="info"
-              [rounded]="true"
-              [text]="true"
-              aria-label="Edit employee"
-              (click)="editEmployee(employee)"
-            ></button>
-            <button
-              pButton
-              type="button"
-              icon="pi pi-trash"
-              severity="danger"
-              [rounded]="true"
-              [text]="true"
-              aria-label="Delete employee"
-              (click)="confirmRemoveEmployee(employee)"
-            ></button>
-          </div>
-        </td>
-      </tr>
-    </ng-template>
-
-    <ng-template pTemplate="emptymessage">
-      <tr>
-        <td colspan="4">No employees found.</td>
-      </tr>
-    </ng-template>
-  </p-table>
-
-  <p-dialog
-    header="Add Employee"
-    [(visible)]="addEmployeeDialogVisible"
-    [modal]="true"
-    [draggable]="false"
-    [resizable]="false"
-    [style]="{ width: 'min(520px, 92vw)' }"
-  >
-    <app-employee-form
-      (employeeSaved)="handleEmployeeSaved()"
-      (cancelled)="closeAddEmployeeDialog()"
-    ></app-employee-form>
-  </p-dialog>
-
-  <p-dialog
-    header="Edit Employee"
-    [(visible)]="editEmployeeDialogVisible"
-    [modal]="true"
-    [draggable]="false"
-    [resizable]="false"
-    [style]="{ width: 'min(520px, 92vw)' }"
-    (onHide)="selectedEmployee = null"
-  >
-    <app-employee-edit
-      [employee]="selectedEmployee"
-      (employeeUpdated)="handleEmployeeUpdated($event)"
-      (cancelled)="closeEditEmployeeDialog()"
-    ></app-employee-edit>
-  </p-dialog>
-
-  <p-dialog
-    header="Remove Employee"
-    [(visible)]="deleteEmployeeDialogVisible"
-    [modal]="true"
-    [draggable]="false"
-    [resizable]="false"
-    [style]="{ width: 'min(420px, 92vw)' }"
-    (onHide)="employeePendingDelete = null"
-  >
-    <p class="delete-message">Do you want to remove this?</p>
-
-    <div class="delete-actions">
-      <button
-        pButton
-        type="button"
-        label="Cancel"
-        severity="secondary"
-        [outlined]="true"
-        (click)="closeDeleteEmployeeDialog()"
-      ></button>
-      <button
-        pButton
-        type="button"
-        label="OK"
-        icon="pi pi-check"
-        severity="danger"
-        (click)="removeEmployee()"
-      ></button>
-    </div>
-  </p-dialog>
 </main>

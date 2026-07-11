@@ -1,0 +1,174 @@
+<div class="users-panel">
+  <div class="tab-toolbar">
+    <button
+      pButton
+      type="button"
+      icon="pi pi-plus"
+      label="Add User"
+      (click)="openCreateUserDialog()"
+    ></button>
+  </div>
+
+  <p-table
+    #userTable
+    [value]="users"
+    [loading]="loading()"
+    [paginator]="true"
+    [rows]="5"
+    [rowsPerPageOptions]="[5, 10, 20]"
+    [globalFilterFields]="['id', 'name', 'userName', 'email', 'role']"
+    dataKey="id"
+    styleClass="p-datatable-gridlines"
+  >
+    <ng-template pTemplate="caption">
+      <div class="table-caption">
+        <h2>Users</h2>
+        <span class="search-field">
+          <i class="pi pi-search"></i>
+          <input
+            pInputText
+            type="text"
+            placeholder="Search"
+            (input)="userTable.filterGlobal($any($event.target).value, 'contains')"
+          />
+        </span>
+      </div>
+    </ng-template>
+
+    <ng-template pTemplate="header">
+      <tr>
+        <th pSortableColumn="id">
+          <div class="column-header">
+            User ID
+            <p-sortIcon field="id"></p-sortIcon>
+          </div>
+        </th>
+        <th pSortableColumn="userName">
+          <div class="column-header">
+            Name
+            <p-sortIcon field="userName"></p-sortIcon>
+          </div>
+        </th>
+        <!-- <th pSortableColumn="email">
+          <div class="column-header">
+            Email
+            <p-sortIcon field="email"></p-sortIcon>
+          </div>
+        </th> -->
+        <th pSortableColumn="role">
+          <div class="column-header">
+            Role
+            <p-sortIcon field="role"></p-sortIcon>
+          </div>
+        </th>
+      </tr>
+      <tr>
+        <th>
+          <p-columnFilter field="id" type="text" matchMode="contains" placeholder="Filter by ID"></p-columnFilter>
+        </th>
+        <th>
+          <p-columnFilter field="userName" type="text" matchMode="contains" placeholder="Filter by name"></p-columnFilter>
+        </th>
+        <!-- <th>
+          <p-columnFilter field="email" type="text" matchMode="contains" placeholder="Filter by email"></p-columnFilter>
+        </th> -->
+        <th>
+          <p-columnFilter field="role" type="text" matchMode="contains" placeholder="Filter by role"></p-columnFilter>
+        </th>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-user>
+      <tr>
+        <td>{{ user.id }}</td>
+        <td>{{ displayName(user) }}</td>
+        <!-- <td>{{ user.email || '-' }}</td> -->
+        <td>{{ user.role || '-' }}</td>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="emptymessage">
+      <tr>
+        <td colspan="4">No users found.</td>
+      </tr>
+    </ng-template>
+  </p-table>
+
+  <p-dialog
+    header="Add User"
+    [(visible)]="createUserDialogVisible"
+    [modal]="true"
+    [draggable]="false"
+    [resizable]="false"
+    [style]="{ width: 'min(520px, 92vw)' }"
+    (onHide)="resetForm()"
+  >
+    <form class="user-form" #userForm="ngForm" (ngSubmit)="createUser()">
+      <label class="form-field" for="userName">
+        <span>Name</span>
+        <input
+          pInputText
+          id="userName"
+          name="userName"
+          type="text"
+          [(ngModel)]="userName"
+          required
+        />
+      </label>
+
+      <!-- <label class="form-field" for="email">
+        <span>Email</span>
+        <input
+          pInputText
+          id="email"
+          name="email"
+          type="email"
+          [(ngModel)]="email"
+        />
+      </label> -->
+
+      <label class="form-field" for="role">
+        <span>Role</span>
+        <input
+          pInputText
+          id="role"
+          name="role"
+          type="text"
+          [(ngModel)]="role"
+          required
+        />
+      </label>
+
+      <label class="form-field" for="password">
+        <span>Password</span>
+        <p-password
+          inputId="password"
+          name="password"
+          [(ngModel)]="password"
+          [feedback]="false"
+          [toggleMask]="true"
+          required
+        ></p-password>
+      </label>
+
+      <div class="form-actions">
+        <button
+          pButton
+          type="button"
+          label="Cancel"
+          severity="secondary"
+          [outlined]="true"
+          (click)="closeCreateUserDialog()"
+        ></button>
+        <button
+          pButton
+          type="submit"
+          label="Add User"
+          icon="pi pi-check"
+          [loading]="saving()"
+          [disabled]="userForm.invalid || saving()"
+        ></button>
+      </div>
+    </form>
+  </p-dialog>
+</div>

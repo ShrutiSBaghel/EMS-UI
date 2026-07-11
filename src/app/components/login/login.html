@@ -1,0 +1,47 @@
+<main class="login-page">
+  <form class="login-panel" #loginForm="ngForm" (ngSubmit)="submit()">
+    <div class="login-header">
+      <p class="eyebrow">Employee Management</p>
+      <h1>Login</h1>
+    </div>
+
+    <label class="form-field" for="username">
+      <span>Username</span>
+      <input
+        pInputText
+        id="username"
+        name="username"
+        type="text"
+        autocomplete="username"
+        [(ngModel)]="username"
+        required
+      />
+    </label>
+
+    <label class="form-field" for="password">
+      <span>Password</span>
+      <p-password
+        inputId="password"
+        name="password"
+        [(ngModel)]="password"
+        [feedback]="false"
+        [toggleMask]="true"
+        autocomplete="current-password"
+        required
+      ></p-password>
+    </label>
+
+    @if (errorMessage()) {
+      <p class="error-message">{{ errorMessage() }}</p>
+    }
+
+    <button
+      pButton
+      type="submit"
+      label="Submit"
+      icon="pi pi-sign-in"
+      [loading]="loading()"
+      [disabled]="loginForm.invalid || loading()"
+    ></button>
+  </form>
+</main>
