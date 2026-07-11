@@ -1,6 +1,8 @@
 import { Routes } from '@angular/router';
 import { EmployeeList } from './components/employee-list/employee-list';
 import { EmployeeForm } from './components/employee-form/employee-form';
+import { Login } from './components/login/login';
+import { UserList } from './components/user-list/user-list';
 
 export const routes: Routes = [
     {
@@ -9,7 +11,11 @@ export const routes: Routes = [
         component: EmployeeList
     },
     {
-        path: 'employees/new',
-        component: EmployeeForm
+        path: 'login',
+        component: Login
+    },
+    {
+        path: 'users',
+        component: UserList
     }
 ];

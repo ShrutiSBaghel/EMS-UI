@@ -5,12 +5,14 @@ import { ButtonModule } from 'primeng/button';
 import { DialogModule } from 'primeng/dialog';
 import { InputTextModule } from 'primeng/inputtext';
 import { TableModule } from 'primeng/table';
+import { TabsModule } from 'primeng/tabs';
 import { EmployeeForm } from '../employee-form/employee-form';
 import { EmployeeEdit } from '../employee-edit/employee-edit';
+import { UserList } from '../user-list/user-list';
 
 @Component({
   selector: 'app-employee-list',
-  imports: [ButtonModule, DialogModule, EmployeeEdit, EmployeeForm, InputTextModule, TableModule],
+  imports: [ButtonModule, DialogModule, EmployeeEdit, EmployeeForm, InputTextModule, TableModule, TabsModule, UserList],
   standalone: true,
   templateUrl: './employee-list.html',
   styleUrl: './employee-list.css',
