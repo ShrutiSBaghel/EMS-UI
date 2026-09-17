@@ -1,0 +1,206 @@
+<div class="onboarding-panel">
+  <p-table
+    #onboardingTable
+    [value]="requests"
+    [paginator]="true"
+    [rows]="5"
+    [rowsPerPageOptions]="[5, 10, 20]"
+    [globalFilterFields]="['name', 'department', 'manager', 'status', 'priority']"
+    dataKey="requestId"
+    styleClass="p-datatable-gridlines"
+  >
+    <ng-template pTemplate="caption">
+      <div class="table-caption">
+        <h2>Onboarding Requests</h2>
+        <span class="search-field">
+          <i class="pi pi-search"></i>
+          <input
+            pInputText
+            type="text"
+            placeholder="Search"
+            (input)="onboardingTable.filterGlobal($any($event.target).value, 'contains')"
+          />
+        </span>
+      </div>
+    </ng-template>
+
+    <ng-template pTemplate="header">
+      <tr>
+        <th pSortableColumn="name">
+          <div class="column-header">
+            Name
+            <p-sortIcon field="name"></p-sortIcon>
+          </div>
+        </th>
+        <th pSortableColumn="department">
+          <div class="column-header">
+            Department
+            <p-sortIcon field="department"></p-sortIcon>
+          </div>
+        </th>
+        <th pSortableColumn="manager">
+          <div class="column-header">
+            Manager
+            <p-sortIcon field="manager"></p-sortIcon>
+          </div>
+        </th>
+        <th pSortableColumn="status">
+          <div class="column-header">
+            Status
+            <p-sortIcon field="status"></p-sortIcon>
+          </div>
+        </th>
+        <th pSortableColumn="priority">
+          <div class="column-header">
+            Priority
+            <p-sortIcon field="priority"></p-sortIcon>
+          </div>
+        </th>
+        <th class="actions-header">Actions</th>
+      </tr>
+      <tr>
+        <th>
+          <p-columnFilter field="name" type="text" matchMode="contains" placeholder="Filter by name"></p-columnFilter>
+        </th>
+        <th>
+          <p-columnFilter field="department" type="text" matchMode="contains" placeholder="Filter by department"></p-columnFilter>
+        </th>
+        <th>
+          <p-columnFilter field="manager" type="text" matchMode="contains" placeholder="Filter by manager"></p-columnFilter>
+        </th>
+        <th>
+          <p-columnFilter field="status" type="text" matchMode="contains" placeholder="Filter by status"></p-columnFilter>
+        </th>
+        <th>
+          <p-columnFilter field="priority" type="text" matchMode="contains" placeholder="Filter by priority"></p-columnFilter>
+        </th>
+        <th></th>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-request>
+      <tr>
+        <td>{{ request.name }}</td>
+        <td>{{ request.department }}</td>
+        <td>{{ request.manager }}</td>
+        <td>
+          <span class="status-pill">{{ request.status }}</span>
+        </td>
+        <td>
+          <span class="priority-pill" [class.high]="request.priority === 'High'" [class.medium]="request.priority === 'Medium'" [class.low]="request.priority === 'Low'">
+            {{ request.priority }}
+          </span>
+        </td>
+        <td>
+          <div class="actions-menu">
+            <button
+              pButton
+              type="button"
+              icon="pi pi-ellipsis-v"
+              [rounded]="true"
+              [text]="true"
+              aria-label="Open onboarding actions"
+            ></button>
+            <div class="actions-popover">
+              <a href="" (click)="$event.preventDefault(); openViewDialog(request)">View</a>
+              <button type="button" (click)="approveRequest(request)">Approve</button>
+              <button type="button" (click)="rejectRequest(request)">Reject</button>
+            </div>
+          </div>
+        </td>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="emptymessage">
+      <tr>
+        <td colspan="6">No onboarding requests found.</td>
+      </tr>
+    </ng-template>
+  </p-table>
+
+  <p-dialog
+    header="Onboarding Request Details"
+    [(visible)]="viewDialogVisible"
+    [modal]="true"
+    [draggable]="false"
+    [resizable]="false"
+    [style]="{ width: 'min(760px, 94vw)' }"
+    (onHide)="closeViewDialog()"
+  >
+    @if (selectedRequest) {
+      <div class="dialog-toolbar">
+        <button
+          pButton
+          type="button"
+          [label]="editMode ? 'Done' : 'Edit'"
+          [icon]="editMode ? 'pi pi-check' : 'pi pi-pencil'"
+          severity="info"
+          [outlined]="!editMode"
+          (click)="toggleEditMode()"
+        ></button>
+      </div>
+
+      <div class="request-form">
+        <label class="form-field" for="requestId">
+          <span>Request ID</span>
+          <input pInputText id="requestId" type="text" [(ngModel)]="selectedRequest.requestId" [readonly]="!editMode" />
+        </label>
+        <label class="form-field" for="name">
+          <span>Name</span>
+          <input pInputText id="name" type="text" [(ngModel)]="selectedRequest.name" [readonly]="!editMode" />
+        </label>
+        <label class="form-field" for="email">
+          <span>Email</span>
+          <input pInputText id="email" type="email" [(ngModel)]="selectedRequest.email" [readonly]="!editMode" />
+        </label>
+        <label class="form-field" for="department">
+          <span>Department</span>
+          <input pInputText id="department" type="text" [(ngModel)]="selectedRequest.department" [readonly]="!editMode" />
+        </label>
+        <label class="form-field" for="designation">
+          <span>Designation</span>
+          <input pInputText id="designation" type="text" [(ngModel)]="selectedRequest.designation" [readonly]="!editMode" />
+        </label>
+        <label class="form-field" for="manager">
+          <span>Reporting Manager</span>
+          <input pInputText id="manager" type="text" [(ngModel)]="selectedRequest.manager" [readonly]="!editMode" />
+        </label>
+        <label class="form-field" for="joiningDate">
+          <span>Joining Date</span>
+          <input pInputText id="joiningDate" type="date" [(ngModel)]="selectedRequest.joiningDate" [readonly]="!editMode" />
+        </label>
+        <label class="form-field" for="requestedBy">
+          <span>Requested By</span>
+          <input pInputText id="requestedBy" type="text" [(ngModel)]="selectedRequest.requestedBy" [readonly]="!editMode" />
+        </label>
+        <label class="form-field" for="createdDate">
+          <span>Created Date</span>
+          <input pInputText id="createdDate" type="date" [(ngModel)]="selectedRequest.createdDate" [readonly]="!editMode" />
+        </label>
+        <label class="form-field" for="status">
+          <span>Current Status</span>
+          <input pInputText id="status" type="text" [(ngModel)]="selectedRequest.status" [readonly]="!editMode" />
+        </label>
+        <label class="form-field" for="currentApprover">
+          <span>Current Approver</span>
+          <input pInputText id="currentApprover" type="text" [(ngModel)]="selectedRequest.currentApprover" [readonly]="!editMode" />
+        </label>
+        <label class="form-field" for="priority">
+          <span>Priority</span>
+          <input pInputText id="priority" type="text" [(ngModel)]="selectedRequest.priority" [readonly]="!editMode" />
+        </label>
+      </div>
+
+      <div class="dialog-actions">
+        <button
+          pButton
+          type="button"
+          label="Close"
+          severity="secondary"
+          [outlined]="true"
+          (click)="closeViewDialog()"
+        ></button>
+      </div>
+    }
+  </p-dialog>
+</div>
