@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Employee } from '../models/employee';
+import { runtimeConfig } from '../config/runtime-config';
 
 @Injectable({
   providedIn: 'root',
@@ -9,7 +10,7 @@ export class EmployeeService {
 
   constructor(private httpClient: HttpClient){}
 
-  private apiUrl = 'http://localhost:8080/employees';
+  private apiUrl = `${runtimeConfig.apiBaseUrl}/employees`;
 
   getEmployees() {
     return this.httpClient.get<Employee[]>(this.apiUrl);

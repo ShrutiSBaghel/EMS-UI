@@ -1,9 +1,10 @@
 <main class="employee-page">
   <section class="employee-shell">
-    <p-tabs value="Employees">
+    <p-tabs [value]="activeTab" (valueChange)="changeTab($event)">
       <p-tablist>
         <p-tab value="Employees">Employees</p-tab>
         <p-tab value="Users">Users</p-tab>
+        <p-tab value="Onboarding Requests">Onboarding Requests</p-tab>
       </p-tablist>
       <p-tabpanels>
         <p-tabpanel value="Employees">
@@ -180,7 +181,16 @@
           </p-dialog>
         </p-tabpanel>
         <p-tabpanel value="Users">
-          <app-user-list></app-user-list>
+          @if (activeTab === 'Users') {
+            <app-user-list></app-user-list>
+          }
+        </p-tabpanel>
+        <p-tabpanel value="Onboarding Requests">
+          @if (activeTab === 'Onboarding Requests') {
+            <app-onboarding-requests
+              (requestApproved)="addApprovedOnboardingEmployee($event)"
+            ></app-onboarding-requests>
+          }
         </p-tabpanel>
       </p-tabpanels>
     </p-tabs>

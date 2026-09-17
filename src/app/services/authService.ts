@@ -1,12 +1,13 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AuthResponse, LoginRequest, RegisterRequest } from '../models/auth';
+import { runtimeConfig } from '../config/runtime-config';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
-  private apiUrl = 'http://localhost:8080/auth';
+  private apiUrl = `${runtimeConfig.apiBaseUrl}/auth`;
   private tokenStorageKey = 'ems_auth_token';
 
   constructor(private httpClient: HttpClient) {}

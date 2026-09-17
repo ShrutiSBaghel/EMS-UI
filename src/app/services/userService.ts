@@ -1,12 +1,13 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { User } from '../models/user';
+import { runtimeConfig } from '../config/runtime-config';
 
 @Injectable({
   providedIn: 'root',
 })
 export class UserService {
-  private apiUrl = 'http://localhost:8080/users';
+  private apiUrl = `${runtimeConfig.apiBaseUrl}/users`;
 
   constructor(private httpClient: HttpClient) {}
 

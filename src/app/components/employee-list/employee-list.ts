@@ -9,10 +9,11 @@ import { TabsModule } from 'primeng/tabs';
 import { EmployeeForm } from '../employee-form/employee-form';
 import { EmployeeEdit } from '../employee-edit/employee-edit';
 import { UserList } from '../user-list/user-list';
+import { OnboardingRequests } from '../onboarding-requests/onboarding-requests';
 
 @Component({
   selector: 'app-employee-list',
-  imports: [ButtonModule, DialogModule, EmployeeEdit, EmployeeForm, InputTextModule, TableModule, TabsModule, UserList],
+  imports: [ButtonModule, DialogModule, EmployeeEdit, EmployeeForm, InputTextModule, OnboardingRequests, TableModule, TabsModule, UserList],
   standalone: true,
   templateUrl: './employee-list.html',
   styleUrl: './employee-list.css',
@@ -27,6 +28,7 @@ export class EmployeeList implements OnInit {
   deleteEmployeeDialogVisible = false;
   selectedEmployee: Employee | null = null;
   employeePendingDelete: Employee | null = null;
+  activeTab = 'Employees';
 
   ngOnInit(): void {
     this.loadEmployees();
@@ -106,5 +108,24 @@ export class EmployeeList implements OnInit {
       this.closeDeleteEmployeeDialog();
       this.loadEmployees();
     });
+  }
+
+  addApprovedOnboardingEmployee(employee: Employee) {
+    const nextEmployeeId = this.employees.length
+      ? Math.max(...this.employees.map(currentEmployee => currentEmployee.id ?? 0)) + 1
+      : 1;
+
+    this.employees = [
+      {
+        ...employee,
+        id: nextEmployeeId
+      },
+      ...this.employees
+    ];
+  }
+
+  // to handle undefined well
+  changeTab(tab: string | number | undefined) {
+    this.activeTab = String(tab);
   }
 }
